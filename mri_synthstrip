@@ -47,17 +47,17 @@ torch.backends.cudnn.benchmark = True
 torch.backends.cudnn.deterministic = True
 
 # configure device
-gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
 if args.gpu:
-    os.environ['CUDA_VISIBLE_DEVICES'] = gpu
+    if not torch.cuda.is_available():
+        sf.system.fatal('-g flag provided but CUDA is not available')
     device = torch.device('cuda')
     device_name = 'GPU'
 else:
-    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
     device = torch.device('cpu')
     device_name = 'CPU'
-    if args.threads is not None:
-        torch.set_num_threads(args.threads)
+
+if args.threads is not None:
+    torch.set_num_threads(args.threads)
 
 def extend_sdt(sdt, border=1):
     """Extend SynthStrip's narrow-band signed distance transform (SDT).
