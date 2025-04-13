@@ -18,7 +18,7 @@ Then build and push the container to the [Docker Hub](https://hub.docker.com/u/f
 
 ```shell
 VERSION=X.X
-docker build -t freesurfer/synthstrip:${VERSION} .
+docker build -f Dockerfile.cpu -t freesurfer/synthstrip:${VERSION} .
 docker push freesurfer/synthstrip:${VERSION}
 ```
 
@@ -37,10 +37,16 @@ sed -i "s/\(synthstrip.\)[0-9.]*\(\.\|$\)/\1$VERSION\2/g" synthstrip-singularity
 git diff synthstrip-*
 ```
 
+Lock the model files again.
+
+```shell
+git annex lock synthstrip.*.pt
+```
+
 ## Exporting requirements
 
 Export updated requirement files as build artifacts for users who wish to build environments:
 
 ```shell
-docker build --target export --output env .
+docker build -f Dockerfile.cpu --target export --output env .
 ```
