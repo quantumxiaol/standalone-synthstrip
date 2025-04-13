@@ -9,10 +9,12 @@ FROM base AS build
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential
 
-RUN --mount=type=cache,target=/root/.cache pip3 install --user \
+RUN --mount=type=cache,target=/root/.cache \
+    pip3 install --user \
     https://github.com/freesurfer/surfa/archive/ca4e26317d3556776268ede7de20752743bf49a2.zip
 
-RUN --mount=type=cache,target=/root/.cache pip3 install --user --index-url https://download.pytorch.org/whl/cpu \
+RUN --mount=type=cache,target=/root/.cache \
+    pip3 install --user --index-url https://download.pytorch.org/whl/cpu \
     torch==2.1.2
 
 # install synthstrip from local folder

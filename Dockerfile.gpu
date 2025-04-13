@@ -9,11 +9,17 @@ FROM base AS build
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential
 
-RUN --mount=type=cache,target=/root/.cache pip3 install --user \
+RUN --mount=type=cache,target=/root/.cache \
+    pip3 install --user \
     https://github.com/freesurfer/surfa/archive/ca4e26317d3556776268ede7de20752743bf49a2.zip
 
-RUN --mount=type=cache,target=/root/.cache pip3 install --user --index-url https://download.pytorch.org/whl/cu118 \
-     torch==2.1.2
+RUN --mount=type=cache,target=/root/.cache \
+    pip3 install --user --index-url https://download.pytorch.org/whl/cu118 \
+    torch==2.1.2
+
+# prevent cu118 warning "Applied workaround for CuDNN issue, install nvrtc.so"
+RUN cd $FREESURFER_HOME/env/lib/python*/site-packages/torch/lib && \
+    ln -s libcaffe2_nvrtc.so libnvrtc.so
 
 # install synthstrip from local folder
 COPY --chmod=0775 mri_synthstrip $FREESURFER_HOME
