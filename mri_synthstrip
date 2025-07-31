@@ -303,6 +303,7 @@ if args.out:
     fill = np.min([image.min(), 0]) if args.fill is None else args.fill
     image[mask == 0] = fill
     image.save(args.out)
+    print(f'Set background to: {fill}')
     print(f'Masked image saved to: {args.out}')
 
 # write the brain mask
