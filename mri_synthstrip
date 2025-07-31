@@ -276,10 +276,9 @@ for f in range(image.nframes):
     conformed = conformed.reshape(target_shape)
 
     # normalize
-    inp = torch.from_numpy(conformed.data).to(device).unsqueeze(0).unsqueeze(0)
-    inp -= inp.min()
-    inp /= inp.quantile(0.99)
-    inp = inp.clamp(0, 1)
+    conformed -= conformed.min()
+    conformed = (conformed / conformed.percentile(99)).clip(0, 1)
+    inp = torch.from_numpy(conformed.data[np.newaxis, np.newaxis]).to(device)
 
     # predict the sdt
     with torch.no_grad():
