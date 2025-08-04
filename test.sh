@@ -38,3 +38,10 @@ compare_vol out.mgz large.mgz
 # multiple frames, NIfTI format
 t -i multi.in.nii.gz -m out.nii.gz
 compare_vol out.nii.gz multi.mask.nii.gz
+
+# large FOV without `torch.quantile` error
+t -i fov320.in.nii.gz -m out.nii.gz
+
+# explicit fill value
+t -i in.mgz -o out.mgz -f 255 --fill 255
+mris_calc out.mgz stats 2>&1 | grep 'Max.*255\.'

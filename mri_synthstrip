@@ -24,6 +24,7 @@ p.add_argument('-d', '--sdt', metavar='FILE', help='save distance transform to f
 p.add_argument('-g', '--gpu', action='store_true', help='use the GPU')
 p.add_argument('-b', '--border', default=1, type=float, help='mask border threshold in mm, defaults to 1')
 p.add_argument('-t', '--threads', type=int, help='PyTorch CPU threads, PyTorch default if unset')
+p.add_argument('-f', '--fill', type=float, help='BG fill value, defaults to min(image.min, 0)')
 p.add_argument('--no-csf', action='store_true', help='exclude CSF from brain border')
 p.add_argument('--model', metavar='FILE', help='alternative model weights')
 if len(sys.argv) == 1 or '-h' in sys.argv or '--help' in sys.argv:
@@ -276,10 +277,9 @@ for f in range(image.nframes):
     conformed = conformed.reshape(target_shape)
 
     # normalize
-    inp = torch.from_numpy(conformed.data).to(device).unsqueeze(0).unsqueeze(0)
-    inp -= inp.min()
-    inp /= inp.quantile(0.99)
-    inp = inp.clamp(0, 1)
+    conformed -= conformed.min()
+    conformed = (conformed / conformed.percentile(99)).clip(0, 1)
+    inp = torch.from_numpy(conformed.data[np.newaxis, np.newaxis]).to(device)
 
     # predict the sdt
     with torch.no_grad():
@@ -300,8 +300,10 @@ print('done')
 
 # write the masked output
 if args.out:
-    image[mask == 0] = np.min([0, image.min()])
+    fill = np.min([image.min(), 0]) if args.fill is None else args.fill
+    image[mask == 0] = fill
     image.save(args.out)
+    print(f'Set background to: {fill}')
     print(f'Masked image saved to: {args.out}')
 
 # write the brain mask
