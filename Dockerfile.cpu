@@ -4,7 +4,7 @@ ENV FREESURFER_HOME="/freesurfer"
 ENV PYTHONUSERBASE="$FREESURFER_HOME/env"
 ENV PATH="$FREESURFER_HOME:$PATH"
 
-# Add procps to base container so nextflow can do accounting for processes
+# install procps so Nextflow can track processes
 RUN apt-get update && apt-get install -y --no-install-recommends \
   procps \
   && apt-get clean \
@@ -24,8 +24,9 @@ RUN --mount=type=cache,target=/root/.cache \
     torch==2.1.2
 
 # install synthstrip from local folder
-COPY --chmod=0775 mri_synthstrip $FREESURFER_HOME
-COPY --chmod=0664 synthstrip.*.pt $FREESURFER_HOME/models/
+COPY --chmod=0755 mri_synthstrip $FREESURFER_HOME
+COPY --chmod=0644 synthstrip.*.pt $FREESURFER_HOME/models/
+RUN chmod -R +X $FREESURFER_HOME
 
 # export build artifacts
 RUN python3 -V >python.txt
