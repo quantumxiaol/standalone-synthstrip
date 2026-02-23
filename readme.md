@@ -4,7 +4,7 @@ Source code for the SynthStrip skull-stripping tool. For documentation, visit [s
 
 ## Local environment (uv)
 
-This repository is extracted from `freesurfer/dev/mri_synthstrip` and keeps the original `mri_synthstrip` CLI script.
+This repository is extracted from `freesurfer/dev/mri_synthstrip` and now uses a standard `src/` Python package layout while keeping the original CLI behavior.
 
 ### Python compatibility
 
@@ -25,6 +25,15 @@ source .venv/bin/activate
 export FREESURFER_HOME="$(pwd)"
 ```
 
+### Install as a package
+
+```shell
+uv sync
+uv run mri_synthstrip -h
+```
+
+The command is exposed through `pyproject.toml` as a console script. A compatibility wrapper `./mri_synthstrip` is also kept for direct execution.
+
 ### Model files
 
 `mri_synthstrip` needs model weights (`synthstrip.1.pt` or `synthstrip.nocsf.1.pt`).
@@ -37,14 +46,14 @@ If this repo was produced by `git filter-repo`, the checked-in `synthstrip*.pt` 
 ### CLI usage
 
 ```shell
-./mri_synthstrip -i input.nii.gz -m mask.nii.gz
-./mri_synthstrip -i input.nii.gz -o stripped.nii.gz
-./mri_synthstrip -i input.nii.gz -d sdt.nii.gz
-./mri_synthstrip --no-csf -i input.nii.gz -m mask.nii.gz
-./mri_synthstrip --model /path/to/synthstrip.1.pt -i input.nii.gz -m mask.nii.gz
+mri_synthstrip -i input.nii.gz -m mask.nii.gz
+mri_synthstrip -i input.nii.gz -o stripped.nii.gz
+mri_synthstrip -i input.nii.gz -d sdt.nii.gz
+mri_synthstrip --no-csf -i input.nii.gz -m mask.nii.gz
+mri_synthstrip --model /path/to/synthstrip.1.pt -i input.nii.gz -m mask.nii.gz
 ```
 
-Run `./mri_synthstrip -h` for all options.
+Run `mri_synthstrip -h` for all options.
 
 ## Building containers
 

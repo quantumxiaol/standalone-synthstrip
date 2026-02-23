@@ -1,0 +1,2 @@
+"""Standalone SynthStrip package."""
+
