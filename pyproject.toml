@@ -1,0 +1,12 @@
+[project]
+name = "standalone-synthstrip"
+version = "0.1.0"
+description = "Standalone SynthStrip CLI extracted from FreeSurfer."
+readme = "readme.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "numpy>=1.26,<3",
+    "surfa @ git+https://github.com/freesurfer/surfa.git@ca4e26317d3556776268ede7de20752743bf49a2",
+    "torch==2.1.2; python_version < '3.12'",
+    "torch>=2.2,<3; python_version >= '3.12'",
+]
